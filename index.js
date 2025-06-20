@@ -10,11 +10,11 @@ const verifyToken = require('./src/adapters/inbound/http/middlewares/verifyToken
 
 const PORT = process.env.PORT || 3000;
 
+app.use(metricsMiddleware);
+
 app.use('/api/usuarios', verifyToken, require('./src/adapters/inbound/http/routes/userRoutes'));
 
 app.use(express.json());
-
-app.use(metricsMiddleware);
 
 const swaggerDefinition = {
   openapi: '3.0.0',

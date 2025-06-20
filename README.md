@@ -101,6 +101,16 @@ Todos os testes do `AuthController` e `UserController` estão implementados com 
 ## 🧱 Futuras Expansões
 
 - Integração com mensageria (RabbitMQ/Kafka)
-- Observabilidade com Prometheus/Grafana
 - CI/CD com GitHub Actions
 - Deploy em nuvem (ECS, EKS, etc.)
+
+### Observabilidade
+
+- Para expor métricas Prometheus, o serviço disponibiliza o endpoint `GET /metrics`.
+- Métricas padrão do Node.js e histograma de duração de requisições HTTP.
+
+#### Acessando as métricas
+   - Prometheus acesse: http://localhost:9090  
+   - Grafana acesse: http://localhost:3001  
+      - USER: admin
+      - SENHA: admin

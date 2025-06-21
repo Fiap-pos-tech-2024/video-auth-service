@@ -3,11 +3,14 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const MysqlUserRepository = require('./src/adapters/outbound/mysql/MysqlUserRepository');
+const { metricsMiddleware, register } = require('./src/config/prometheus');
 
 const app = express();
 const verifyToken = require('./src/adapters/inbound/http/middlewares/verifyToken');
 
 const PORT = process.env.PORT || 3000;
+
+app.use(metricsMiddleware);
 
 app.use('/api/usuarios', verifyToken, require('./src/adapters/inbound/http/routes/userRoutes'));
 
@@ -47,6 +50,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 app.get('/health', (_req, res) => res.status(200).send('OK'));
+
+app.get('/metrics', async (_req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
 
 
 app.use('/api/auth', require('./src/adapters/inbound/http/routes/authRoutes'));

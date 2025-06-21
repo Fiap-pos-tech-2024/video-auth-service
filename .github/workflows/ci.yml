@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ feat/auth-validate-route-and-sonarcloud ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 

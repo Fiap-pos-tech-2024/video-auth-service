@@ -1,36 +1,42 @@
 # video-auth-service
 
+[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Fiap-pos-tech-2024_video-auth-service)
+
 Microsserviço responsável pela autenticação e gerenciamento de usuários do sistema de processamento de vídeos da FIAP X.
 
 ## ✨ Visão Geral
 
 Este serviço permite:
 
-- Registro de novos usuários com nome, e-mail e CPF
-- Armazenamento seguro dos dados em MySQL
-- Integração com AWS Cognito para autenticação e recuperação de senha
-- Login com e-mail e senha
-- Recuperação de senha via código enviado por e-mail
+- Registro de novos usuários com nome, e-mail e CPF  
+- Armazenamento seguro dos dados em MySQL  
+- Integração com AWS Cognito para autenticação e recuperação de senha  
+- Login com e-mail e senha  
+- Recuperação de senha via código enviado por e-mail  
+- Validação de token com retorno dos dados do usuário  
+- Exposição de métricas via Prometheus/Grafana  
 
 ## 🛠️ Tecnologias Utilizadas
 
-- Node.js + Express
-- Arquitetura Hexagonal (Ports & Adapters)
-- MySQL (via Sequelize)
-- AWS Cognito (SDK v3)
-- Docker + Docker Compose
-- Jest para testes unitários
+- Node.js + Express  
+- Arquitetura Hexagonal (Ports & Adapters)  
+- MySQL (via Sequelize)  
+- AWS Cognito (SDK v3 + JWT Verify)  
+- Docker + Docker Compose  
+- Jest para testes unitários  
+- SonarCloud para análise de qualidade  
+- Prometheus + Grafana para observabilidade  
 
 ## 📁 Estrutura do Projeto
 
 ```
 src/
 ├── adapters/
-│   ├── inbound/      # HTTP Controllers e rotas
+│   ├── inbound/      # Controllers, rotas, middlewares
 │   └── outbound/     # Repositórios Cognito e MySQL
-├── config/           # Configuração do banco
-├── domain/           # Entidades
-├── ports/            # Interfaces
+├── config/           # Configuração de Prometheus
+├── domain/           # Entidades (User)
+├── ports/            # Interfaces (use cases)
 ├── usecases/         # Lógica de negócio
 └── index.js          # Ponto de entrada da aplicação
 ```
@@ -61,56 +67,62 @@ MYSQL_PASSWORD=fiap123
 MYSQL_DATABASE=authdb
 
 AWS_REGION=us-east-1
-COGNITO_USER_POOL_ID=us-east-1_xxxxx
-COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxx
-AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
-AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX
+COGNITO_CLIENT_ID=XXXXXXXXXXXXXXXXXXXXXXXXXX
+AWS_ACCESS_KEY_ID=XXXXXXXXXXXX
+AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 NODE_ENV=local
 ```
 
 ## 📌 Endpoints Principais
 
-- `POST /api/auth/register` – Cadastra um novo usuário
-- `POST /api/auth/confirmar-senha` – Define nova senha após registro
-- `POST /api/auth/login` – Realiza login com e-mail/senha
-- `POST /api/auth/recuperar-senha` – Inicia recuperação de senha
-- `POST /api/auth/confirmar-recuperacao` – Confirma nova senha com código
-- `GET  /api/usuarios/email/:email` – Consulta usuário por e-mail
-- `GET  /api/usuarios/cpf/:cpf` – Consulta usuário por CPF
+### 🔓 Autenticação (`/api/auth`)
+
+- `POST /register` – Cadastra um novo usuário  
+- `POST /confirmar-senha` – Define nova senha após o primeiro login  
+- `POST /login` – Realiza login com e-mail e senha  
+- `POST /recuperar-senha` – Envia código para redefinição de senha  
+- `POST /confirmar-recuperacao` – Redefine senha com código recebido  
+- `GET  /validate` – Valida o token e retorna dados do usuário (requer JWT)  
+
+### 👤 Usuário (`/api/usuarios`)
+
+- `GET /email/:email` – Consulta usuário por e-mail  
+- `GET /cpf/:cpf` – Consulta usuário por CPF  
 
 ## ✅ Testes
 
 ```bash
 # Executar os testes unitários
-npx jest
+npm test -- --coverage
 ```
 
-## 🧪 Cobertura
+Cobertura com Jest para AuthController e UserController, incluindo:
 
-Todos os testes do `AuthController` e `UserController` estão implementados com Jest, cobrindo casos de sucesso, erros de input e falhas esperadas.
+- Casos de sucesso  
+- Falhas esperadas  
+- Erros de entrada  
 
-## 📦 Requisitos Atendidos (FIAP X)
+## 📊 Observabilidade
 
-- [x] Microsserviço com autenticação
-- [x] Armazenamento seguro dos dados (MySQL)
-- [x] Proteção com usuário/senha via Cognito
-- [x] Documentação dos endpoints
-- [x] Testes unitários
-- [x] Pronto para CI/CD via Docker Compose
+- O serviço expõe métricas em `GET /metrics`  
+- Métricas padrão do Node.js + histograma de latência de requisições  
 
-## 🧱 Futuras Expansões
+### Prometheus
 
-- Integração com mensageria (RabbitMQ/Kafka)
-- CI/CD com GitHub Actions
-- Deploy em nuvem (ECS, EKS, etc.)
+- Acesse: [http://localhost:9090](http://localhost:9090)
 
-### Observabilidade
+### Grafana
 
-- Para expor métricas Prometheus, o serviço disponibiliza o endpoint `GET /metrics`.
-- Métricas padrão do Node.js e histograma de duração de requisições HTTP.
+- Acesse: [http://localhost:3001](http://localhost:3001)  
+- Login: `admin` / `admin`  
+- Dashboard pronto para visualização de métricas  
 
-#### Acessando as métricas
-   - Prometheus acesse: http://localhost:9090  
-   - Grafana acesse: http://localhost:3001  
-      - USER: admin
-      - SENHA: admin
+## ☁️ SonarCloud
+
+- Análise de qualidade e cobertura automatizada via GitHub Actions  
+- Projeto: [`Fiap-pos-tech-2024_video-auth-service`](https://sonarcloud.io/summary/new_code?id=Fiap-pos-tech-2024_video-auth-service)
+
+---
+
+Desenvolvido como parte da Fase 5 do projeto FIAP X.

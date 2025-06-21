@@ -1,0 +1,20 @@
+# Dependências
+node_modules/
+
+# Configurações e arquivos locais
+.env
+.vscode/
+.idea/
+
+# Docker
+mysql/
+
+# MacOS
+.DS_Store
+
+# Testes e logs temporários
+coverage/
+*.log
+
+# Lock de pacotes (opcional: remova se quiser versionar)
+package-lock.json

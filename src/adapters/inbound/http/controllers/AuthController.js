@@ -176,3 +176,31 @@ exports.confirmarRecuperacao = async (req, res) => {
   }
 };
 
+// ============ VALIDAR TOKEN ============
+exports.validarToken = async (req, res) => {
+  try {
+    const cognitoId = req.user.sub;
+
+    const user = await UserModel.findOne({
+      where: { cognitoId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado no banco' });
+    }
+
+    return res.status(200).json({
+      message: 'Token válido',
+      user: {
+        id: user.id,
+        nome: user.name,
+        email: user.email,
+        cpf: user.cpf,
+      },
+    });
+  } catch (err) {
+    console.error('Erro ao validar token:', err.message);
+    return res.status(500).json({ error: 'Erro interno', detalhes: err.message });
+  }
+};
+

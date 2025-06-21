@@ -1,0 +1,1 @@
+ :R%Fiap-pos-tech-2024_video-auth-service

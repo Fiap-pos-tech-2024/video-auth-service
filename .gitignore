@@ -16,5 +16,3 @@ mysql/
 coverage/
 *.log
 
-# Lock de pacotes (opcional: remova se quiser versionar)
-package-lock.json

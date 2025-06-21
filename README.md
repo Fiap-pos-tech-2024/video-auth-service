@@ -1,8 +1,15 @@
 # video-auth-service
 
-[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Fiap-pos-tech-2024_video-auth-service)
-
 Microsserviço responsável pela autenticação e gerenciamento de usuários do sistema de processamento de vídeos da FIAP X.
+
+## 📊 SonarCloud
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=alert_status)](https://sonarcloud.io/dashboard?id=Fiap-pos-tech-2024_video-auth-service)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=coverage)](https://sonarcloud.io/dashboard?id=Fiap-pos-tech-2024_video-auth-service)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Fiap-pos-tech-2024_video-auth-service)
+
+---
+
 
 ## ✨ Visão Geral
 

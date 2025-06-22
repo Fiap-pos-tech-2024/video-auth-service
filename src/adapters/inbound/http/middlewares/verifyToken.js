@@ -1,18 +1,14 @@
 require('dotenv').config();
+const { CognitoJwtVerifier } = require('aws-jwt-verify');
 
-const ENV = process.env.NODE_ENV || 'local';
 const headerError = { error: 'Token de autenticação ausente ou inválido' };
 const invalidError = { error: 'Token inválido ou expirado' };
 
-let verifier;
-if (ENV !== 'local') {
-  const { CognitoJwtVerifier } = require('aws-jwt-verify');
-  verifier = CognitoJwtVerifier.create({
-    userPoolId: process.env.COGNITO_USER_POOL_ID,
-    tokenUse: 'access',
-    clientId: process.env.COGNITO_CLIENT_ID,
-  });
-}
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: process.env.COGNITO_USER_POOL_ID,
+  tokenUse: 'access',
+  clientId: process.env.COGNITO_CLIENT_ID,
+});
 
 module.exports = async (req, res, next) => {
   const auth = req.headers.authorization;
@@ -25,14 +21,12 @@ module.exports = async (req, res, next) => {
     return res.status(401).json(headerError);
   }
 
-  if (ENV !== 'local') {
-    try {
-      await verifier.verify(token);
-    } catch (err) {
-      console.error('Erro na verificação do token:', err.message);
-      return res.status(403).json(invalidError);
-    }
+  try {
+    const payload = await verifier.verify(token);
+    req.user = payload;
+    next();
+  } catch (err) {
+    console.error('Erro na verificação do token:', err.message);
+    return res.status(403).json(invalidError);
   }
-
-  next();
 };

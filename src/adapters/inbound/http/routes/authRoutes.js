@@ -1,4 +1,5 @@
 const express = require('express');
+const verifyToken = require('../middlewares/verifyToken');
 const router = express.Router();
 const {
   login,
@@ -6,6 +7,7 @@ const {
   confirmarSenha,
   recuperarSenha,
   confirmarRecuperacao,
+  validarToken,
 } = require('../controllers/AuthController');
 
 /**
@@ -154,5 +156,43 @@ router.post('/recuperar-senha', recuperarSenha);
  *         description: Erro ao redefinir senha
  */
 router.post('/confirmar-recuperacao', confirmarRecuperacao);
+
+/**
+ * @swagger
+ * /auth/validate:
+ *   get:
+ *     summary: Valida se o token JWT do usuário é válido e retorna dados do usuário
+ *     tags: [Auth]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token válido e dados do usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sub:
+ *                   type: string
+ *                   description: ID do usuário (Cognito UUID)
+ *                   example: "15b0ec13-f2b2-4dd5-bf04-bd73bce3c92f"
+ *                 email:
+ *                   type: string
+ *                   example: "erik.fernandes87@gmail.com"
+ *                 exp:
+ *                   type: integer
+ *                   description: Timestamp da expiração do token
+ *                   example: 1718632283
+ *                 iat:
+ *                   type: integer
+ *                   description: Timestamp da emissão do token
+ *                   example: 1718628683
+ *       401:
+ *         description: Token ausente ou inválido
+ *       403:
+ *         description: Token expirado ou malformado
+ */
+router.get('/validate', verifyToken, validarToken);
 
 module.exports = router;

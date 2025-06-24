@@ -1,7 +1,7 @@
 name: Build and Push Docker Image to ECR and Redeploy ECS
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 

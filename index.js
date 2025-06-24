@@ -46,7 +46,8 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/auth-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 
 app.get('/health', (_req, res) => res.status(200).send('OK'));

@@ -48,3 +48,17 @@ jobs:
             --service video-auth-service \
             --force-new-deployment \
             --region us-east-1
+
+      - name: Get ALB DNS
+        id: get-alb-dns
+        run: |
+          ALB_DNS=$(aws elbv2 describe-load-balancers \
+            --names ms-shared-alb \
+            --region us-east-1 \
+            --query "LoadBalancers[0].DNSName" \
+            --output text)
+          echo "alb_dns=$ALB_DNS" >> $GITHUB_OUTPUT
+
+      - name: Print Swagger URL
+        run: |
+          echo "📄 Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"

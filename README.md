@@ -8,7 +8,6 @@ Microsserviço responsável pela autenticação e gerenciamento de usuários do 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=coverage)](https://sonarcloud.io/dashboard?id=Fiap-pos-tech-2024_video-auth-service)
 [![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=Fiap-pos-tech-2024_video-auth-service&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Fiap-pos-tech-2024_video-auth-service)
 
-
 ## ✨ Visão Geral
 
 Este serviço permite:
@@ -46,7 +45,7 @@ src/
 └── index.js          # Ponto de entrada da aplicação
 ```
 
-## 🚀 Como Subir o Serviço
+## 🚀 Como Subir o Serviço Localmente
 
 ```bash
 # 1. Clonar o repositório
@@ -123,6 +122,33 @@ Cobertura com Jest para AuthController e UserController, incluindo:
 - Acesse: [http://localhost:3001](http://localhost:3001)  
 - Login: `admin` / `admin`  
 - Dashboard pronto para visualização de métricas  
+
+## ☁️ Deploy na Nuvem (AWS)
+
+Este microsserviço está provisionado e rodando na AWS com a seguinte arquitetura:
+
+- **ECS Fargate**: Execução serverless do container
+- **ECR (Elastic Container Registry)**: Armazenamento da imagem Docker
+- **ALB (Application Load Balancer)**: Exposição pública das rotas via path `/auth-docs`, `/api/auth`, `/api/usuarios`, `/health`
+- **RDS (MySQL)**: Banco de dados relacional
+- **Cognito**: Autenticação e gerenciamento de usuários
+
+### CI/CD via GitHub Actions
+
+O pipeline CI/CD está configurado com:
+
+- **Build da imagem Docker**
+- **Push para o ECR**
+- **Força de novo deploy no ECS Fargate**
+- **Integração com SonarCloud**
+
+> O deploy é disparado automaticamente a cada pull request aprovado na branch `main`.
+
+### Acesso em Produção
+
+- **Swagger (Documentação)**: `http://<alb-dns>/auth-docs`
+- **Healthcheck**: `http://<alb-dns>/health`
+- **APIs públicas**: prefixo `/api/auth` e `/api/usuarios`
 
 ## ☁️ SonarCloud
 

@@ -5,17 +5,24 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const MysqlUserRepository = require('./src/adapters/outbound/mysql/MysqlUserRepository');
 const { metricsMiddleware, register } = require('./src/config/prometheus');
 
-const app = express();
 const verifyToken = require('./src/adapters/inbound/http/middlewares/verifyToken');
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware Prometheus
 app.use(metricsMiddleware);
 
-app.use('/api/usuarios', verifyToken, require('./src/adapters/inbound/http/routes/userRoutes'));
-
+// Middleware para JSON
 app.use(express.json());
 
+// Rotas protegidas
+app.use('/api/usuarios', verifyToken, require('./src/adapters/inbound/http/routes/userRoutes'));
+
+// Rotas públicas
+app.use('/api/auth', require('./src/adapters/inbound/http/routes/authRoutes'));
+
+// Swagger/OpenAPI
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
@@ -25,7 +32,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `http://localhost:${PORT}/api`,
+      url: process.env.SWAGGER_URL || `http://localhost:${PORT}/api`,
     },
   ],
   components: {
@@ -46,9 +53,9 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/auth-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
+// Healthcheck & métricas
 app.get('/health', (_req, res) => res.status(200).send('OK'));
 
 app.get('/metrics', async (_req, res) => {
@@ -56,17 +63,13 @@ app.get('/metrics', async (_req, res) => {
   res.end(await register.metrics());
 });
 
-
-app.use('/api/auth', require('./src/adapters/inbound/http/routes/authRoutes'));
-
-
+// Inicialização do servidor
 app.listen(PORT, async () => {
   console.log(`✅ Auth Service rodando na porta ${PORT}`);
-  console.log(`📄 Swagger disponível em: http://localhost:${PORT}/docs`);
+  console.log(`📄 Swagger disponível em: ${process.env.SWAGGER_URL || `http://localhost:${PORT}/auth-docs`}`);
 
-  // Retry de conexão com o banco
+  // Conexão com o banco e sync de modelo
   const repo = new MysqlUserRepository();
-
   let attempts = 0;
   const maxAttempts = 10;
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -76,8 +79,9 @@ app.listen(PORT, async () => {
       const conn = await repo.pool.getConnection();
       await conn.ping();
       conn.release();
+
       console.log('🟢 Conectado ao banco de dados MySQL com sucesso');
-      // Criação automática da tabela Users
+
       const { UserModel } = require('./src/adapters/outbound/cognito/repositories/UserModel');
       await UserModel.sync({ alter: true });
 

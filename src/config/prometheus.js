@@ -3,7 +3,6 @@ const client = require("prom-client");
 const register = new client.Registry();
 client.collectDefaultMetrics({ register });
 
-// 🔧 Altere os labels para: method, route, status_code
 const httpRequestDurationSeconds = new client.Histogram({
   name: "http_request_duration_seconds",
   help: "Duration of HTTP requests in seconds",
@@ -19,7 +18,10 @@ const metricsMiddleware = (req, res, next) => {
   const end = httpRequestDurationSeconds.startTimer();
 
   res.on("finish", () => {
-    const route = req.route?.path || req.path || "unknown_route";
+    const baseUrl = req.baseUrl || '';
+    const routePath = req.route?.path || '';
+    const route = `${baseUrl}${routePath}` || req.path || 'unknown_route';
+
     end({
       method: req.method,
       route,

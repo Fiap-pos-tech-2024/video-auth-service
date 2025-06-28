@@ -4,6 +4,7 @@ discovery.relabel "static_targets" {
   }]
 }
 
+
 prometheus.scrape "video_auth_service" {
   job_name        = "video-auth-service"
   metrics_path    = "/metrics"
@@ -26,3 +27,6 @@ prometheus.remote_write "metrics_hosted_prometheus" {
     }
   }
 }
+
+
+

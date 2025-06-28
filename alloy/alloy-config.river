@@ -1,6 +1,6 @@
 discovery.relabel "static_targets" {
   targets = [{
-    __address__ = "localhost:3000",
+    __address__ = "video-auth-service:3000",
   }]
 }
 

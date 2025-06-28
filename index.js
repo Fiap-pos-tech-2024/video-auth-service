@@ -32,7 +32,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: '/',
+      url: `${SWAGGER_URL}/api`,
     }
   ],
   components: {

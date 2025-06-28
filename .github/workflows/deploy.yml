@@ -1,19 +1,46 @@
-name: Build and Push Docker Image to ECR and Redeploy ECS
+name: Deploy
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
+
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build-and-deploy:
+  test-and-sonarcloud:
+    name: Test and Analyze
     runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests and collect coverage
+        run: |
+          npm test -- --coverage
+          ls -la coverage
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build-and-deploy:
+    name: Build and Push Docker Image to ECR and Redeploy ECS
+    runs-on: ubuntu-latest
+    needs: test-and-sonarcloud  # só roda se testes passarem
 
     steps:
       - name: Checkout code
@@ -23,7 +50,6 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::816069165502:role/gh-actions-video-auth-service-role
-          # ⚠️ Substitua "816069165502" pelo ID da sua conta AWS
           aws-region: us-east-1
 
       - name: Login to Amazon ECR
@@ -64,4 +90,4 @@ jobs:
 
       - name: Print Swagger URL
         run: |
-          echo "📄 Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"
+          echo "Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"

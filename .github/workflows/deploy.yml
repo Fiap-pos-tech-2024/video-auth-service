@@ -107,13 +107,13 @@ jobs:
             --force-new-deployment \
             --region us-east-1
 
-      - name: Gerar alloy-config.river com o ALB DNS
+      - name: Substituir ALB_DNS em alloy-config.river
         run: |
-          ALB_DNS=${{ steps.get-alb-dns.outputs.alb_dns }}
-          echo "🔧 Substituindo ALB DNS no alloy-config..."
-          cat alloy/alloy-config.template.river | ALB_DNS=$ALB_DNS envsubst > alloy/alloy-config.river
-          echo "✅ Arquivo gerado:"
+          echo "🔧 Substituindo ALB DNS no alloy-config.river..."
+          sed -i "s|\${ALB_DNS}|${{ steps.get-alb-dns.outputs.alb_dns }}|g" alloy/alloy-config.river
+          echo "✅ Arquivo atualizado:"
           cat alloy/alloy-config.river
+
 
       - name: Print Metrics URL   
         run: |

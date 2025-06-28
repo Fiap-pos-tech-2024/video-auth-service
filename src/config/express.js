@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
-//PROMETHEUS MÉTRICAS
+//PROMETHEUS MÉTRICAS ===
 app.use(metricsMiddleware);
 app.get('/metrics', async (req, res) => {
   try {

@@ -15,6 +15,10 @@ prometheus.scrape "video_auth_service" {
   forward_to = [prometheus.remote_write.metrics_hosted_prometheus.receiver]
 }
 
+logging {
+  level = "debug"
+}
+
 prometheus.remote_write "metrics_hosted_prometheus" {
   endpoint {
     name = "hosted-prometheus"

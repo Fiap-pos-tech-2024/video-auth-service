@@ -1,17 +1,19 @@
-discovery.relabel "static_targets" {
-  targets = [{
-    __address__ = "${ALB_DNS}:80",
-  }]
+locals {
+  alb_dns = env("VIDEO_AUTH_SERVICE_ALB_DNS")
 }
 
+discovery.relabel "static_targets" {
+  targets = [{
+    __address__ = "${locals.alb_dns}:80"
+  }]
+}
 
 prometheus.scrape "video_auth_service" {
   job_name        = "video-auth-service"
   metrics_path    = "/metrics"
   scrape_interval = "15s"
   scrape_timeout  = "10s"
-
-  targets = discovery.relabel.static_targets.output
+  targets         = discovery.relabel.static_targets.output
 
   forward_to = [prometheus.remote_write.metrics_hosted_prometheus.receiver]
 }
@@ -27,6 +29,3 @@ prometheus.remote_write "metrics_hosted_prometheus" {
     }
   }
 }
-
-
-

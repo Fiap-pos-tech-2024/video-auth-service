@@ -65,7 +65,7 @@ jobs:
       - name: Print Swagger URL
         run: |
           echo "📄 Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"
-          
+
   build-and-push-alloy:
     runs-on: ubuntu-latest
     needs: build-and-deploy
@@ -97,3 +97,12 @@ jobs:
           docker image rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG || true
           docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./alloy
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Force new ECS deployment for Grafana Alloy
+        run: |
+          echo "Forçando novo deploy do serviço ECS grafana-alloy..."
+          aws ecs update-service \
+            --cluster microservices-cluster \
+            --service grafana-alloy \
+            --force-new-deployment \
+            --region us-east-1

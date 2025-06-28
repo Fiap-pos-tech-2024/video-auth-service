@@ -4,7 +4,7 @@ locals {
 
 discovery.relabel "static_targets" {
   targets = [{
-    __address__ = "${locals.alb_dns}:80"
+    __address__ = local.alb_dns + ":80"
   }]
 }
 
@@ -13,7 +13,8 @@ prometheus.scrape "video_auth_service" {
   metrics_path    = "/metrics"
   scrape_interval = "15s"
   scrape_timeout  = "10s"
-  targets         = discovery.relabel.static_targets.output
+
+  targets = discovery.relabel.static_targets.output
 
   forward_to = [prometheus.remote_write.metrics_hosted_prometheus.receiver]
 }

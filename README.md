@@ -110,18 +110,37 @@ Cobertura com Jest para AuthController e UserController, incluindo:
 
 ## 📊 Observabilidade
 
-- O serviço expõe métricas em `GET /metrics`  
-- Métricas padrão do Node.js + histograma de latência de requisições  
+Este serviço está integrado ao **Grafana Cloud** via **Grafana Alloy**, garantindo monitoramento remoto e escalável com Prometheus hospedado.
 
-### Prometheus
+- As métricas estão disponíveis na rota `GET /metrics`
+- São exportadas automaticamente para o Grafana Cloud após o deploy
 
-- Acesse: [http://localhost:9090](http://localhost:9090)
+### 🔍 Métricas coletadas
 
-### Grafana
+- **Métricas padrão** de uso de CPU, memória e eventos Node.js (`prom-client`)
+- **Histograma de latência HTTP** com labels por método, rota e status (`http_request_duration_seconds`)
 
-- Acesse: [http://localhost:3001](http://localhost:3001)  
-- Login: `admin` / `admin`  
-- Dashboard pronto para visualização de métricas  
+### 📈 Dashboard Grafana Cloud
+
+Visualize o painel de monitoramento em tempo real:
+
+🔗 [Acessar Dashboard](https://fiapmicroservices.grafana.net/d/video-auth-prom/video-auth-service-prometheus?orgId=1&from=now-15m&to=now&timezone=browser&refresh=30s)
+
+> Requer login com conta autorizada na stack `fiapmicroservices`.
+
+### 🛠️ Como funciona
+
+A integração foi feita via:
+
+- `prom-client` no Node.js para expor métricas
+- Rota `/metrics` no Express
+- Imagem personalizada do **Grafana Alloy** rodando em ECS Fargate
+- Alloy envia as métricas diretamente para o **Prometheus remoto** do Grafana Cloud
+
+### 🔐 Segurança
+
+- Apenas o Alloy acessa o endpoint `/metrics` da aplicação
+- Tráfego de métrica é autenticado via token gerado no Grafana Cloud 
 
 ## ☁️ Deploy na Nuvem (AWS)
 

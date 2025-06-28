@@ -4,11 +4,11 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const MysqlUserRepository = require('./src/adapters/outbound/mysql/MysqlUserRepository');
 const { metricsMiddleware, register } = require('./src/config/prometheus');
-
 const verifyToken = require('./src/adapters/inbound/http/middlewares/verifyToken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SWAGGER_URL = process.env.SWAGGER_URL || `http://localhost:${PORT}`;
 
 // Middleware Prometheus
 app.use(metricsMiddleware);
@@ -32,8 +32,8 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: process.env.SWAGGER_URL || `http://localhost:${PORT}/api`,
-    },
+      url: `${SWAGGER_URL}`,
+    }
   ],
   components: {
     securitySchemes: {
@@ -66,7 +66,7 @@ app.get('/metrics', async (_req, res) => {
 // Inicialização do servidor
 app.listen(PORT, async () => {
   console.log(`✅ Auth Service rodando na porta ${PORT}`);
-  console.log(`📄 Swagger disponível em: ${process.env.SWAGGER_URL || `http://localhost:${PORT}/auth-docs`}`);
+  console.log(`📄 Swagger disponível em: ${SWAGGER_URL}/auth-docs`);
 
   // Conexão com o banco e sync de modelo
   const repo = new MysqlUserRepository();

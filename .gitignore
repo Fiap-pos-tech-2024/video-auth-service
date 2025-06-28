@@ -16,3 +16,7 @@ mysql/
 coverage/
 *.log
 
+alloy-darwin-arm64.zip
+data-alloy
+
+.scannerwork/

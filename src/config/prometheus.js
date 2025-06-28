@@ -1,6 +1,7 @@
 const client = require("prom-client");
 
-client.collectDefaultMetrics();
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
 
 const httpRequestDurationSeconds = new client.Histogram({
   name: "http_request_duration_seconds",
@@ -9,10 +10,13 @@ const httpRequestDurationSeconds = new client.Histogram({
   buckets: [0.1, 0.5, 1, 1.5, 2, 5],
 });
 
+register.registerMetric(httpRequestDurationSeconds);
+
 const metricsMiddleware = (req, res, next) => {
   if (req.path === "/metrics") {
     return next();
   }
+
   const end = httpRequestDurationSeconds.startTimer();
   res.on("finish", () => {
     end({
@@ -21,9 +25,11 @@ const metricsMiddleware = (req, res, next) => {
       code: res.statusCode,
     });
   });
+
   next();
 };
 
-const register = client.register;
-
-module.exports = { metricsMiddleware, register };
+module.exports = {
+  metricsMiddleware,
+  register,
+};

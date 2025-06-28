@@ -1,6 +1,0 @@
-apiVersion: 1
-providers:
-  - name: 'Video Auth Service'
-    type: file
-    options:
-      path: /var/lib/grafana/dashboards

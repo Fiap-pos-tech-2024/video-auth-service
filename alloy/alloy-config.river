@@ -1,11 +1,6 @@
-locals {
-  alb_dns    = env("VIDEO_AUTH_SERVICE_ALB_DNS")
-  alb_target = local.alb_dns + ":80"
-}
-
 discovery.relabel "static_targets" {
   targets = [{
-    __address__ = local.alb_target,
+    __address__ = env("VIDEO_AUTH_SERVICE_ALB_DNS") + ":80",
   }]
 }
 

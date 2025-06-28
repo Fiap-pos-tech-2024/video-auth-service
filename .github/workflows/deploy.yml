@@ -91,3 +91,7 @@ jobs:
       - name: Print Swagger URL
         run: |
           echo "Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"
+
+      - name: Print Grafana URL
+        run: |
+          echo "Grafana disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/grafana"

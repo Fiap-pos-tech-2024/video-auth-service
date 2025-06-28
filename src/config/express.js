@@ -1,11 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('../adapters/inbound/http/routes/authRoutes');
+const { metricsMiddleware, register } = require('./prometheus');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
+//PROMETHEUS MÉTRICAS
+app.use(metricsMiddleware);
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    res.status(500).end(err.message);
+  }
+});
+
+// Body parser
 app.use(bodyParser.json());
 
 // Swagger config
@@ -28,7 +41,6 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
-
 app.use('/auth-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rotas

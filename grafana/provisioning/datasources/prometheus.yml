@@ -1,13 +1,9 @@
 apiVersion: 1
+
 datasources:
-  - name: Prometheus Cloud
+  - name: Prometheus
     type: prometheus
-    uid: prometheus-cloud
     access: proxy
-    url: https://prometheus-prod-01-prod-us-central-0.grafana.net/api/prom
-    basicAuth: true
-    basicAuthUser: ${GRAFANA_USERNAME}
-    jsonData:
-      httpMethod: POST
-    secureJsonData:
-      basicAuthPassword: ${GRAFANA_PASSWORD}
+    url: http://prometheus:9090
+    isDefault: true
+    uid: fephal8d4o0e8d

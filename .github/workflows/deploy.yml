@@ -66,6 +66,7 @@ jobs:
         run: |
           echo "📄 Swagger disponível em: http://${{ steps.get-alb-dns.outputs.alb_dns }}/auth-docs"
 
+
   build-and-push-alloy:
     runs-on: ubuntu-latest
     needs: build-and-deploy
@@ -78,6 +79,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::816069165502:role/gh-actions-video-auth-service-role
+          # ⚠️ Substitua "816069165502" pelo ID da sua conta AWS
           aws-region: us-east-1
 
       - name: Login to Amazon ECR
@@ -107,38 +109,7 @@ jobs:
             --force-new-deployment \
             --region us-east-1
 
-  build-and-push-grafana:
-    runs-on: ubuntu-latest
-    needs: build-and-push-alloy
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::816069165502:role/gh-actions-video-auth-service-role
-          aws-region: us-east-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build and push Grafana image (no cache)
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: grafana-ui
-          IMAGE_TAG: latest
+      - name: Print Grafana Cloud Dashboard URL
         run: |
-          echo "🔁 Forçando build da imagem do Grafana UI..."
-          aws ecr describe-repositories --repository-names $ECR_REPOSITORY --region us-east-1 || \
-          aws ecr create-repository --repository-name $ECR_REPOSITORY --region us-east-1
-
-          docker image rm $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG || true
-          docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./grafana
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Print ECR Image Pushed
-        run: |
-          echo "✅ Imagem Grafana UI enviada para: ${{ steps.login-ecr.outputs.registry }}/grafana-ui:latest"
+          echo "📊 Dashboard Prometheus no Grafana Cloud:"
+          echo "🔗 https://fiapmicroservices.grafana.net/d/video-auth-prom/video-auth-service-prometheus?orgId=1&from=now-15m&to=now&timezone=browser&refresh=30s"

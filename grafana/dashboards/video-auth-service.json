@@ -79,7 +79,7 @@
                 {
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "round(\n  sum(\n    increase(\n      http_request_duration_seconds_count{\n        route!~\"/metrics|/doc|/swagger-ui-.*|/favicon.*\"\n      }[1h]\n    )\n  ) by (route)\n)",
+                    "expr": "round(\n  sum(\n    increase(\n      http_request_duration_seconds_count{\n        route!~\"/auth-metrics|/doc|/swagger-ui-.*|/favicon.*\"\n      }[1h]\n    )\n  ) by (route)\n)",
                     "format": "table",
                     "instant": true,
                     "legendFormat": "__auto",

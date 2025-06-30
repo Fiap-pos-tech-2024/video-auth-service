@@ -112,7 +112,7 @@ Cobertura com Jest para AuthController e UserController, incluindo:
 
 Este serviço está integrado ao **Grafana Cloud** via **Grafana Alloy**, garantindo monitoramento remoto e escalável com Prometheus hospedado.
 
-- As métricas estão disponíveis na rota `GET /metrics`
+- As métricas estão disponíveis na rota `GET /auth-metrics`
 - São exportadas automaticamente para o Grafana Cloud após o deploy
 
 ### 🔍 Métricas coletadas
@@ -133,13 +133,13 @@ Visualize o painel de monitoramento em tempo real:
 A integração foi feita via:
 
 - `prom-client` no Node.js para expor métricas
-- Rota `/metrics` no Express
+- Rota `/auth-metrics` no Express
 - Imagem personalizada do **Grafana Alloy** rodando em ECS Fargate
 - Alloy envia as métricas diretamente para o **Prometheus remoto** do Grafana Cloud
 
 ### 🔐 Segurança
 
-- Apenas o Alloy acessa o endpoint `/metrics` da aplicação
+- Apenas o Alloy acessa o endpoint `/auth-metrics` da aplicação
 - Tráfego de métrica é autenticado via token gerado no Grafana Cloud 
 
 ## ☁️ Deploy na Nuvem (AWS)

@@ -6,7 +6,7 @@ discovery.relabel "static_targets" {
 
 prometheus.scrape "video_auth_service" {
   job_name        = "video-auth-service"
-  metrics_path    = "/metrics"
+  metrics_path    = "/auth-metrics"
   scrape_interval = "15s"
   scrape_timeout  = "10s"
 

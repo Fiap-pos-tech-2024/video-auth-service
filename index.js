@@ -58,7 +58,7 @@ app.use('/auth-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Healthcheck & métricas
 app.get('/health', (_req, res) => res.status(200).send('OK'));
 
-app.get('/metrics', async (_req, res) => {
+app.get('/auth-metrics', async (_req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });

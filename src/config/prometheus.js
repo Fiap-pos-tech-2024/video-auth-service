@@ -26,7 +26,7 @@ const requestFailures = new client.Counter({
 register.registerMetric(requestFailures);
 
 const metricsMiddleware = (req, res, next) => {
-  if (req.path === "/metrics") return next();
+  if (req.path === "/auth-metrics") return next();
 
   const end = httpRequestDurationSeconds.startTimer();
 

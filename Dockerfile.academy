@@ -1,0 +1,37 @@
+# Dockerfile otimizado para AWS Academy e ARM64->x86_64 builds
+FROM --platform=linux/amd64 node:18-slim AS base
+
+# Install only essential build tools for x86_64 emulation
+RUN apt-get update && apt-get install -y \
+    g++ \
+    make \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with specific flags to reduce build issues
+RUN npm config set cache /tmp/.npm \
+    && npm config set fund false \
+    && npm config set audit false \
+    && npm ci --only=production --no-optional --ignore-scripts
+
+# Final stage
+FROM --platform=linux/amd64 node:18-slim AS runtime
+
+WORKDIR /app
+
+# Copy node_modules from build stage
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/package*.json ./
+
+# Copy application code
+COPY . .
+
+EXPOSE 3000
+
+# Use node directly instead of npm to avoid potential issues
+CMD ["node", "index.js"]

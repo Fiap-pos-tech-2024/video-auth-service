@@ -1,7 +1,13 @@
-discovery.relabel "self_target" {
+discovery.relabel "static_targets_auth" {
   targets = [{
     __address__ = env("SHARED_ALB_DNS") + ":80",
   }]
+
+  rule {
+    source_labels = []
+    target_label  = "job"
+    replacement   = "video-auth-service"
+  }
 }
 
 prometheus.scrape "auth_service" {
@@ -9,13 +15,15 @@ prometheus.scrape "auth_service" {
   metrics_path    = "/auth-metrics"
   scrape_interval = "15s"
   scrape_timeout  = "10s"
-  targets         = discovery.relabel.self_target.output
-  forward_to      = [prometheus.remote_write.to_grafana.receiver]
+
+  targets = discovery.relabel.static_targets_auth.output
+
+  forward_to = [prometheus.remote_write.to_grafana_auth.receiver]
 }
 
-prometheus.remote_write "to_grafana" {
+prometheus.remote_write "to_grafana_auth" {
   endpoint {
-    name = "hosted-prometheus"
+    name = "hosted-prometheus-auth"
     url  = env("GRAFANA_REMOTE_WRITE_URL")
 
     basic_auth {

@@ -21,7 +21,7 @@ prometheus.scrape "video_auth_service" {
   forward_to = [prometheus.remote_write.to_grafana.receiver]
 }
 
-prometheus.remote_write "to_grafana" {
+prometheus.remote_write "to_grafana_auth" {
   endpoint {
     name = "hosted-prometheus"
     url  = env("GRAFANA_REMOTE_WRITE_URL")

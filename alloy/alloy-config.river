@@ -18,7 +18,7 @@ prometheus.scrape "video_auth_service" {
 
   targets = discovery.relabel.video_auth_targets.output
 
-  forward_to = [prometheus.remote_write.to_grafana_auth]
+  forward_to = [prometheus.remote_write.to_grafana_auth.receiver]
 }
 
 prometheus.remote_write "to_grafana_auth" {

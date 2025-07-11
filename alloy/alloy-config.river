@@ -1,4 +1,4 @@
-discovery.relabel "video_auth_targets" {
+discovery.relabel "static_targets_auth" {
   targets = [{
     __address__ = env("VIDEO_AUTH_SERVICE_ALB_DNS") + ":80",
   }]
@@ -10,13 +10,13 @@ discovery.relabel "video_auth_targets" {
   }
 }
 
-prometheus.scrape "video_auth_service" {
+prometheus.scrape "auth_service" {
   job_name        = "video-auth-service"
   metrics_path    = "/auth-metrics"
   scrape_interval = "15s"
   scrape_timeout  = "10s"
 
-  targets = discovery.relabel.video_auth_targets.output
+  targets = discovery.relabel.static_targets_auth.output
 
   forward_to = [prometheus.remote_write.to_grafana_auth.receiver]
 }

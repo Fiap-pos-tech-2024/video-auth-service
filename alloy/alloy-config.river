@@ -23,7 +23,7 @@ prometheus.scrape "auth_service" {
 
 prometheus.remote_write "to_grafana_auth" {
   endpoint {
-    name = "hosted-prometheus"
+    name = "hosted-prometheus-auth"
     url  = env("GRAFANA_REMOTE_WRITE_URL")
 
     basic_auth {
